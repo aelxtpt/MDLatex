@@ -32,17 +32,11 @@ struct MarkdownLatexView: View {
         var renderedHTMLCache: [String: String] = [:]
         
         init() {
-            let contentController = WKUserContentController()
-            let webConfiguration = WKWebViewConfiguration()
-            webConfiguration.userContentController = contentController
-            self.webViewRef = WKWebView(frame: .zero, configuration: webConfiguration)
+            self.webViewRef = WebViewPool.shared.getWebView()
         }
         
         deinit {
-            // Clean up resources to avoid memory leaks
-            webViewRef.stopLoading()
-            webViewRef.navigationDelegate = nil
-            webViewRef.uiDelegate = nil
+            WebViewPool.shared.returnWebView(self.webViewRef)
         }
     }
     
