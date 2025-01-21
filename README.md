@@ -20,7 +20,7 @@ A powerful Swift package for seamlessly rendering Markdown with LaTeX support. F
 Add the following to your `Package.swift`:
 
 ```swift
-.package(url: "https://github.com/zugate/MDLatex", from: "1.0.0")
+.package(url: "https://github.com/zugate/MDLatex", from: "1.0.2")
 ```
 
 Include `MDLatex` as a dependency for your target:
@@ -31,7 +31,7 @@ Include `MDLatex` as a dependency for your target:
 
 Or add it via Xcode:
 1. Navigate to `File > Add Packages`.
-2. Enter the repository URL: `https://github.com/kumar-shubham-zugate/MDLatex`.
+2. Enter the repository URL: `https://github.com/zugate/MDLatex`.
 3. Choose the latest version and integrate it into your project.
 
 ---
