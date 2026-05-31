@@ -1,58 +1,86 @@
-//
-//  Color+Extension.swift
-//  MDLatex
-//
-//  Created by Kumar shubham on 23/12/24.
-//
-
+#if os(iOS) || os(tvOS)
 import SwiftUI
 import UIKit
 
 extension Color {
-    
-    /// Converts a SwiftUI `Color` to a hex string.
-    /// - Parameters:
-    ///   - includeAlpha: Whether to include the alpha channel in the hex. Defaults to `false`.
-    /// - Returns: A hex string like `#RRGGBB` or `#RRGGBBAA`. If alpha == 0, returns `"transparent"`.
-    ///   If color conversion fails, returns `"#000000"`.
+    /// Converte `Color` (SwiftUI) para String em Hex, incluindo (opcionalmente) o canal alpha.
     func toHexString(includeAlpha: Bool = false) -> String {
-        // Convert SwiftUI.Color -> UIColor
         let uiColor = UIColor(self)
-        
-        // Attempt to extract RGBA components
+
         var r: CGFloat = 0
         var g: CGFloat = 0
         var b: CGFloat = 0
         var a: CGFloat = 0
-        
-        // If not in sRGB or an unsupported color space, return fallback
+
         guard uiColor.getRed(&r, green: &g, blue: &b, alpha: &a) else {
-            return "#000000" // fallback to black
+            return "#000000"
         }
-        
-        // If the color is fully transparent, return "transparent"
+
         if a == 0 {
             return "transparent"
         }
-        
-        // Convert each component to [0..255] and format
+
         if includeAlpha {
-            let redInt   = Int(r * 255)
-            let greenInt = Int(g * 255)
-            let blueInt  = Int(b * 255)
-            let alphaInt = Int(a * 255)
-            return String(format: "#%02X%02X%02X%02X", redInt, greenInt, blueInt, alphaInt)
+            return String(format: "#%02X%02X%02X%02X",
+                          Int(r * 255),
+                          Int(g * 255),
+                          Int(b * 255),
+                          Int(a * 255))
         } else {
-            let redInt   = Int(r * 255)
-            let greenInt = Int(g * 255)
-            let blueInt  = Int(b * 255)
-            return String(format: "#%02X%02X%02X", redInt, greenInt, blueInt)
+            return String(format: "#%02X%02X%02X",
+                          Int(r * 255),
+                          Int(g * 255),
+                          Int(b * 255))
         }
     }
-    
-    /// Converts a SwiftUI `Color` to a native `UIColor`.
-    /// - Returns: The corresponding `UIColor`.
+
+    /// Converte `Color` (SwiftUI) para `UIColor` (iOS).
     func toUIColor() -> UIColor {
         UIColor(self)
     }
 }
+
+#elseif os(macOS)
+import SwiftUI
+import AppKit
+
+extension Color {
+    /// Converte `Color` (SwiftUI) para String em Hex, incluindo (opcionalmente) o canal alpha.
+    func toHexString(includeAlpha: Bool = false) -> String {
+        // Converte Color -> NSColor
+        let nsColor = NSColor(self)
+
+        // Precisamos converter para um espaço de cor RGB antes de extrair componentes
+        guard let rgbColor = nsColor.usingColorSpace(.deviceRGB) else {
+            return "#000000"
+        }
+        
+        let r = rgbColor.redComponent
+        let g = rgbColor.greenComponent
+        let b = rgbColor.blueComponent
+        let a = rgbColor.alphaComponent
+
+        if a == 0 {
+            return "transparent"
+        }
+
+        if includeAlpha {
+            return String(format: "#%02X%02X%02X%02X",
+                          Int(r * 255),
+                          Int(g * 255),
+                          Int(b * 255),
+                          Int(a * 255))
+        } else {
+            return String(format: "#%02X%02X%02X",
+                          Int(r * 255),
+                          Int(g * 255),
+                          Int(b * 255))
+        }
+    }
+
+    /// Converte `Color` (SwiftUI) para `NSColor` (macOS).
+    func toNSColor() -> NSColor {
+        NSColor(self)
+    }
+}
+#endif
